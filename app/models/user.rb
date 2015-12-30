@@ -7,10 +7,11 @@ class User
   include DataMapper::Resource
 
   property :id, Serial
-  property :email, String
+  property :email, String, unique: true, format: :email_address, required: true
 
   property :password_digest, Text
 
+  validates_format_of :email, as: :email_address
   validates_confirmation_of :password
 
   def password=(password)
