@@ -3,7 +3,7 @@ ENV['RACK_ENV'] ||= 'test'
 require 'capybara/rspec'
 require './app/app'
 require 'database_cleaner'
-
+require 'web_helper'
 
 Capybara.app = BManager
 
