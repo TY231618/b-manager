@@ -28,4 +28,10 @@ class BManager < Sinatra::Base
     link.save
     redirect('/links')
   end
+
+  get '/links/:tag' do
+    tag = Tag.first(tag: params[:tag])
+    @links = tag ? tag.links : []
+    erb(:'links/index')
+  end
 end
