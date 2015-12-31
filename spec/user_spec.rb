@@ -1,31 +1,16 @@
-feature 'user sign up' do
-  scenario 'allows user to sign up for BManager' do
-    expect { sign_up }.to change(User, :count).by(1)
-    expect(page).to have_content('Welcome, joe_bloggs@gmail.com')
-    expect(User.first.email).to eq('joe_bloggs@gmail.com')
+describe User do
+
+  let!(:user) do
+    User.create(email: 'test@test.com', password: 'secret1234',
+               password_confirmation: 'secret1234')
   end
 
-  scenario 'requires a matching password for confirmation' do
-    expect { sign_up(password_confirmation: 'wrong') }.not_to change(User, :count)
-    expect(current_path).to eq('/users')
-    expect(page).to have_content 'Password does not match the confirmation'
+  it 'authenticates when given a valid email address and password' do
+    authenticated_user = User.authenticate(user.email, user.password)
+    expect(authenticated_user).to eq user
   end
 
-  scenario 'requires an email address to sign up' do
-    expect {sign_up(email: nil)}.not_to change(User, :count)
-    expect(current_path).to eq('/users')
-    expect(page).to have_content('Email must not be blank')
-  end
-
-  scenario "I can't sign up with an invalid email address" do
-    expect { sign_up(email: "invalid@email") }.not_to change(User, :count)
-    expect(current_path).to eq('/users')
-    expect(page).to have_content('Email has an invalid format')
-  end
-
-  scenario 'I cannot sign up with an existing email' do
-    sign_up
-    expect { sign_up }.to_not change(User, :count)
-    expect(page).to have_content('Email is already taken')
+  it 'does not authenticate when given an incorrect password' do
+    expect(User.authenticate(user.email, 'wrong_stupid_password')).to be_nil
   end
 end
